@@ -10,18 +10,21 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    clean: true,
   },
   module: {
     rules: [
       {
-        test: /\.(png|jpe?g|gif)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
       },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
+      filename: 'index.html',
       template: path.resolve(__dirname, 'src/index.html'),
+      favicon: path.resolve(__dirname, 'src/public/favicon.png'),
       excludeChunks: ['sw'],
     }),
     new CopyWebpackPlugin({

@@ -17,6 +17,7 @@ export function generateLoaderAbsoluteTemplate() {
 export function generateMainNavigationListTemplate() {
   return `
     <li><a id="stories-list-button" class="stories-list-button" href="#/stories">Daftar Story</a></li>
+    <li><a id="saved-stories-button" class="saved-stories-button" href="#/stories/saved">Cerita Tersimpan</a></li>
     <li><a id="notifications-button" class="notifications-button" href="#/notifications">Notifikasi</a></li>
   `;
 }
@@ -36,6 +37,7 @@ export function generateAuthenticatedNavigationListTemplate() {
     <li><a id="logout-button" class="logout-button" href="#/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
   `;
 }
+
 
 // Story list templates
 export function generateStoriesListEmptyTemplate() {
@@ -183,5 +185,29 @@ export function generateUnsubscribeButtonTemplate() {
     <button id="unsubscribe-button" class="btn unsubscribe-button">
       Berhenti Berlangganan <i class="fas fa-bell-slash"></i>
     </button>
+  `;
+}
+
+export function generateSaveStoryButtonTemplate() {
+  return `
+    <button id="save-story-button" class="btn btn-outline">
+      <i class="far fa-bookmark"></i> Save Story
+    </button>
+  `;
+}
+
+export function generateRemoveStoryButtonTemplate() {
+  return `
+    <button id="remove-story-button" class="btn btn-outline">
+      <i class="fas fa-bookmark"></i> Remove from Saved
+    </button>
+  `;
+}
+
+export function generateSavedStoriesNavLinkTemplate() {
+  return `
+    <li><a id="saved-stories-button" class="saved-stories-button" href="#/stories/saved">
+      <i class="fas fa-bookmark"></i> Saved Stories
+    </a></li>
   `;
 }
