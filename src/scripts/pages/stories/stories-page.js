@@ -9,6 +9,7 @@ import Map from '../../utils/map';
 import * as API from '../../data/api';
 import { convertBase64ToBlob } from '../../utils';
 import Camera from '../../utils/camera';
+import StoryStorage from '../../data/database';
 
 export default class StoriesPage {
   #presenter = null;
@@ -16,6 +17,7 @@ export default class StoriesPage {
   #currentPage = 1;
   #pageSize = 5;
   #showAddStoryForm = false;
+  #showSavedStories = false; // New state for saved stories view
 
   // Properti untuk fungsi add story
   #form = null;
@@ -28,6 +30,11 @@ export default class StoriesPage {
     // Jika menampilkan form tambah story
     if (this.#showAddStoryForm) {
       return this.#renderAddStoryForm();
+    }
+
+    // Jika menampilkan daftar story yang disimpan
+    if (this.#showSavedStories) {
+      return this.#renderSavedStories();
     }
 
     // Jika menampilkan daftar story
@@ -58,6 +65,11 @@ export default class StoriesPage {
                 <option value="20">20</option>
               </select>
             </div>
+            <div class="filter-group">
+              <button id="toggle-saved-stories" class="btn btn-outline">
+                <i class="far fa-bookmark"></i> Lihat Cerita Tersimpan
+              </button>
+            </div>
           </div>
           
           <div id="stories-list"></div>
@@ -72,6 +84,38 @@ export default class StoriesPage {
               Selanjutnya <i class="fas fa-chevron-right"></i>
             </button>
           </div>
+        </div>
+      </section>
+      
+      <button id="add-story-button" class="floating-add-button" title="Buat Story Baru">
+        <i class="fas fa-plus"></i>
+      </button>
+    `;
+  }
+
+  #renderSavedStories() {
+    return `
+      <section>
+        <div class="stories-list__map__container">
+          <div id="map" class="stories-list__map"></div>
+          <div id="map-loading-container"></div>
+        </div>
+      </section>
+
+      <section class="container">
+        <h1 class="section-title">Cerita Tersimpan</h1>
+
+        <div class="stories-list__container">
+          <div class="stories-filter">
+            <div class="filter-group">
+              <button id="toggle-all-stories" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Kembali ke Semua Cerita
+              </button>
+            </div>
+          </div>
+          
+          <div id="stories-list"></div>
+          <div id="stories-list-loading-container"></div>
         </div>
       </section>
       
@@ -183,10 +227,13 @@ export default class StoriesPage {
     this.#presenter = new StoriesPresenter({
       view: this,
       model: API,
+      storageModel: StoryStorage,
     });
 
     if (this.#showAddStoryForm) {
       this.#setupAddStoryForm();
+    } else if (this.#showSavedStories) {
+      this.#setupSavedStoriesPage();
     } else {
       this.#setupStoryListPage();
     }
@@ -196,7 +243,37 @@ export default class StoriesPage {
     this.#setupFilters();
     this.#setupPagination();
     this.#setupAddStoryButton();
+    this.#setupSavedStoriesToggle();
     this.#presenter.initialStoriesAndMap();
+  }
+
+  #setupSavedStoriesPage() {
+    this.#setupAddStoryButton();
+    this.#setupAllStoriesToggle();
+    this.#presenter.showStoriesListMap()
+      .then(() => this.#presenter.getSavedStories());
+  }
+
+  #setupSavedStoriesToggle() {
+    const toggleSavedStoriesButton = document.getElementById('toggle-saved-stories');
+    if (toggleSavedStoriesButton) {
+      toggleSavedStoriesButton.addEventListener('click', () => {
+        this.#showSavedStories = true;
+        this.#showAddStoryForm = false;
+        this.reRender();
+      });
+    }
+  }
+
+  #setupAllStoriesToggle() {
+    const toggleAllStoriesButton = document.getElementById('toggle-all-stories');
+    if (toggleAllStoriesButton) {
+      toggleAllStoriesButton.addEventListener('click', () => {
+        this.#showSavedStories = false;
+        this.#showAddStoryForm = false;
+        this.reRender();
+      });
+    }
   }
 
   #setupAddStoryButton() {
@@ -208,6 +285,7 @@ export default class StoriesPage {
 
       newAddStoryButton.addEventListener('click', () => {
         this.#showAddStoryForm = true;
+        this.#showSavedStories = false;
         this.reRender();
       });
     }
@@ -573,7 +651,16 @@ export default class StoriesPage {
   populateStoriesListEmpty() {
     const storiesListElement = document.getElementById('stories-list');
     if (storiesListElement) {
-      storiesListElement.innerHTML = generateStoriesListEmptyTemplate();
+      if (this.#showSavedStories) {
+        storiesListElement.innerHTML = `
+          <div class="stories-list__empty">
+            <h2>Tidak ada cerita tersimpan</h2>
+            <p>Anda belum menyimpan cerita apapun. Telusuri cerita dan klik tombol "Simpan" untuk menambahkannya ke sini.</p>
+          </div>
+        `;
+      } else {
+        storiesListElement.innerHTML = generateStoriesListEmptyTemplate();
+      }
     }
   }
 
@@ -644,6 +731,7 @@ export default class StoriesPage {
 
     // Kembali ke tampilan daftar story
     this.#showAddStoryForm = false;
+    this.#showSavedStories = false;
     this.reRender();
 
     // Tampilkan pesan sukses

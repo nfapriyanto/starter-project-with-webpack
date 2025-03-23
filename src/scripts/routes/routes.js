@@ -18,7 +18,7 @@ export const routes = {
   '/login': () => checkUnauthenticatedRouteOnly(new LoginPage()),
   '/register': () => checkUnauthenticatedRouteOnly(new RegisterPage()),
 
-  // Guest story route - penting: tidak perlu autentikasi dan diletakkan SEBELUM route dengan parameter
+  // Guest story route - needs to be before routes with parameters
   '/stories/guest': () => new GuestStoryPage(),
   
   // Authenticated routes

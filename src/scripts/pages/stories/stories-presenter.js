@@ -1,15 +1,17 @@
 export default class StoriesPresenter {
   #view;
   #model;
+  #storageModel;
   #currentFilter = {
     page: 1,
     size: 5,
     location: 0
   };
 
-  constructor({ view, model }) {
+  constructor({ view, model, storageModel }) {
     this.#view = view;
     this.#model = model;
+    this.#storageModel = storageModel;
   }
 
   async showStoriesListMap() {
@@ -56,6 +58,25 @@ export default class StoriesPresenter {
       this.#view.populateStoriesList(response.message, response.listStory || []);
     } catch (error) {
       console.error('getStories: error:', error);
+      this.#view.populateStoriesListError(error.message);
+    } finally {
+      this.#view.hideLoading();
+    }
+  }
+  
+  async getSavedStories() {
+    this.#view.showLoading();
+    try {
+      const savedStories = await this.#storageModel.getAllStories();
+
+      // Sort stories by saved timestamp (newest first)
+      const sortedStories = savedStories.sort((a, b) => {
+        return new Date(b.savedAt) - new Date(a.savedAt);
+      });
+
+      this.#view.populateStoriesList('Successfully retrieved saved stories', sortedStories);
+    } catch (error) {
+      console.error('getSavedStories: error:', error);
       this.#view.populateStoriesListError(error.message);
     } finally {
       this.#view.hideLoading();
