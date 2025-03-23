@@ -17,7 +17,6 @@ export function generateLoaderAbsoluteTemplate() {
 export function generateMainNavigationListTemplate() {
   return `
     <li><a id="stories-list-button" class="stories-list-button" href="#/stories">Daftar Story</a></li>
-    <li><a id="saved-stories-button" class="saved-stories-button" href="#/stories/saved">Cerita Tersimpan</a></li>
     <li><a id="notifications-button" class="notifications-button" href="#/notifications">Notifikasi</a></li>
   `;
 }
