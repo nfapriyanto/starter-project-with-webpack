@@ -3,11 +3,14 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#d97706" />
+    <meta name="description" content="Share and explore stories from Dicoding community members" />
 
-    <title>CityCare App</title>
+    <title>StoryApp</title>
 
     <link rel="shortcut icon" href="favicon.png" />
-    <link rel="apple-touch-icon" href="favicon.png" />
+    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png" />
+    <link rel="manifest" href="app.webmanifest" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -36,8 +39,8 @@
 
       <div class="header-content container">
         <a class="brand-name__link" href="#/">
-          <img class="brand-name__link__image" src="images/logo.png" alt="CityCare Logo" />
-          <span class="brand-name__link__text">Story App</span>
+          <img class="brand-name__link__image" src="images/logo.png" alt="StoryApp Logo" />
+          <span class="brand-name__link__text">StoryApp</span>
         </a>
 
         <nav id="navigation-drawer" class="navigation-drawer">
@@ -56,12 +59,32 @@
         <hr />
         <div class="footer-content">
           <a class="brand-name__link" href="#/">
-            <img class="brand-name__link__image" src="images/logo.png" alt="CityCare Logo" />
-            <span class="brand-name__link__text">Story App</span>
+            <img class="brand-name__link__image" src="images/logo.png" alt="StoryApp Logo" />
+            <span class="brand-name__link__text">StoryApp</span>
           </a>
           <p class="copyright">&copy; 2025 Dicoding. All rights reserved.</p>
         </div>
       </div>
     </footer>
+    
+    <!-- Offline fallback page -->
+    <script>
+      // Check if the browser supports service workers
+      if ('serviceWorker' in navigator) {
+        // Add offline fallback page
+        window.addEventListener('load', () => {
+          // Register the service worker
+          if (navigator.onLine) {
+            // Only show offline notification when going offline
+            window.addEventListener('offline', () => {
+              alert('You are currently offline. Some features may be limited.');
+            });
+          } else {
+            // Show notification if already offline when loading
+            alert('You are currently offline. Some features may be limited.');
+          }
+        });
+      }
+    </script>
   </body>
 </html>
